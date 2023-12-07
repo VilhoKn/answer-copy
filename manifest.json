@@ -9,6 +9,9 @@
 		"800": "fav.png"
 	}
     },
+	"background": {
+		"service_worker": "background.js"
+	},
 	"content_scripts": [
 		{
 			"matches": ["https://kampus.sanomapro.fi/*"], 
@@ -17,6 +20,6 @@
 	],
 	"permissions": [
 		"tabs",
-		"activeTab"
+		"storage"
 	]
 }
