@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "version": "1.0",
+    "name": "Answer-Copy",
+    "action": {
+        "default_popup": "index.html",
+	"default_title": "Answer-Copy",
+ 	"default_icon": {
+		"800": "fav.png"
+	}
+    },
+	"content_scripts": [
+		{
+			"matches": ["https://kampus.sanomapro.fi/*"], 
+			"js": ["content.js"]
+		}
+	],
+	"permissions": []
+}
