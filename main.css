@@ -16,3 +16,7 @@ body {
 .name-container {
     display: none;
 }
+
+.error {
+    display: none;
+}

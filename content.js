@@ -34,6 +34,7 @@ function saveSanomapro() {
 	const questionType = questionTypeMap[document.querySelector("app-document").getAttribute("content-type")]
 	const questionPath = getCurrentTab().url.split("content-feed/")[1]
 	const answers = getSanomaAnswers(questionType)
+	const assignmentName = document.querySelector("app-module-content-title").textContent
 
 	const options = {
 		url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertDocument",
@@ -41,7 +42,7 @@ function saveSanomapro() {
 		headers: {
 		  'Accept': 'application/json',
 		  'Content-Type': 'application/json',
-		  'apiKey': ""
+		  'apiKey': APIKEY
 		},
 		data: JSON.stringify({
 			
@@ -53,7 +54,8 @@ function saveSanomapro() {
 				questionType,
 				questionPath,
 				answers,
-				timestamp: new Date().getTime()
+				timestamp: new Date().getTime(),
+				assignmentName
 			}
 			
 		})
@@ -87,9 +89,3 @@ function getName() {
 function initOtava() {
 	console.log("Otava");
 }
-
-function getCurrentTab() {
-    let queryOptions = { active: true, lastFocusedWindow: true };
-    let [tab] = chrome.tabs.query(queryOptions);
-    return tab;
-  }
