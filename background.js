@@ -1,7 +1,6 @@
-chrome.tabs.onUpdated.addListener(function(tabId, tab) {
-    if (tab.url && tab.url.includes("sanomapro.fi")) {
-        chrome.tabs.sendMessage(tabId, {greeting: "hello"}, (response) => {
-            console.log(response);
-        });
+chrome.tabs.onUpdated.addListener((tabId, tab) => {
+    if (tab.url && ((tab.url.includes("kampus.sanomapro.fi/content-feed") && tab.url.includes("item")) || tab.url.includes("materiaalit.otava.fi/web/"))) {
+        console.log("Sending message to", tab.url);
+        chrome.tabs.sendMessage(tabId, {type: "init", site: tab.url.split(".")[1]});
     }
 });

@@ -1,5 +1,5 @@
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 	console.log("popup.js loaded");
 });
