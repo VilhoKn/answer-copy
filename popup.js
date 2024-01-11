@@ -1,11 +1,16 @@
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-	const currentUrl = await getCurrentTab().url
-	if (!urlCheck(currentUrl)) {
-		document.querySelector(".error").style.display = "block"
-		return
-	}
+	getCurrentTab().then(tab => {
+		if (!(urlCheck(tab.url))) {
+			console.log(urlCheck(tab.url), "cehc")
+			document.querySelector(".error").style.display = "block"
+			return
+		} else {
+			const site = tab.url.includes("sanomapro") ? "sanomapro" : "otava"
+			document.querySelector(".header-site").textContent = site.charAt(0).toUpperCase() + site.slice(1)
+		}
+	})
 
 	chrome.storage.local.get("nimi").then(res => {
 		if(!res.nimi) {
@@ -21,57 +26,71 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	})
 
-	const site = currentUrl.includes("sanomapro") ? "sanomapro" : "otava"
-	const questionPath = site === "sanomapro" ? currentUrl.split("content-feed/") : ""
-	document.querySelector(".header-site").textContent = site.charAt(0).toUpperCase() + site.slice(1)
-
-
 	const options = {
 		method: 'POST',
 		headers: {
-			'Accept': 'application/json',
+			'Access-Control-Request-Headers': '*',
 			'Content-Type': 'application/json',
-			'apiKey': "APIKEY"
+			'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
 		},
-		data: JSON.stringify({
-			
-			"dataSource": "mongodb-atlas",
-			"database": "Cluster0",
-			"collection": site,
+		body: {
+			"dataSource": "Cluster0",
+			"database": "sites",
+			"collection": "",
 			"filter": {
-				questionPath
+				"questionPath":""
 			},
 			"sort": { "timestamp": 1 },
 			"limit": 10
-		})
+		}
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
-	fetch(newUrl, options).then(response => {
-		if(response.data) {
-			document.querySelector(".header-assignment").textContent = response.data[0].assignmentName
-			const answerContainer = document.querySelector(".answer-entry-container")
-			for(const entry of response.data) {
-				addNewEntryElement(entry, answerContainer)
+
+	getCurrentTab().then(tab => {
+		const site = tab.url.includes("sanomapro") ? "sanomapro" : "otava"
+		const questionPath = site === "sanomapro" ? tab.url.split("content-feed/")[1] : ""
+		options.body.collection = site
+		options.body.filter.questionPath = questionPath
+		options.body = JSON.stringify(options.body)
+		fetch(newUrl, options).then(res => res.json()).then(response =>{
+			console.log(response, "response", response.documents)
+			if(response.documents.length > 0) {
+				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName
+				const answerContainer = document.querySelector(".answer-entry-container")
+				for(let entry of response.documents) {
+					addNewEntryElement(entry, answerContainer)
+				}
 			}
-		}
-	});
+		});
+	})
 });
 
 function addNewEntryElement(entry, parent) {
-	const entryContainer = document.createElement("div").classList.add("entry-container")
-	const entryTitle = document.createElement("h1").classList.add("entry-title")
+	const entryContainer = document.createElement("div")
+	entryContainer.classList.add("entry-container")
+	entryContainer.addEventListener("click", () => {
+		sendToWebsite(entry.answers, entry.questionType)
+	})
+	const entryTitle = document.createElement("h1")
+	entryTitle.classList.add("entry-title")
 	entryTitle.textContent = entry.name
 	entryContainer.appendChild(entryTitle)
 	parent.appendChild(entryContainer)
 }
 
+async function sendToWebsite(answers, questionType) {
+	let tab = await getCurrentTab();
+	chrome.tabs.sendMessage(tab.id, {type: "send", answers, site: tab.url.split(".")[1], questionType});
+}
+
 async function getCurrentTab() {
-    let queryOptions = { active: true, lastFocusedWindow: true };
-    let [tab] = await chrome.tabs.query(queryOptions);
-    return tab;
+    let queryOptions = { active: true, currentWindow: true };
+    let tabs = await chrome.tabs.query(queryOptions);
+    return tabs[0];
 }
 
 function urlCheck(url) {
-   return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
+	console.log(url, "check")
+	return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
 }

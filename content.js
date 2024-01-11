@@ -7,11 +7,56 @@
 				initOtava(obj.url);
 			}
 		}
+		if (obj.type === "send") {
+			console.log("Sending", obj.answers)
+			if (obj.site === "sanomapro") {
+				sendToSanomapro(obj.answers, obj.questionType)
+			}
+			else if (obj.site === "otava") {
+				sendToOtava(obj.answers, questionType)
+			}
+		}
 	})
 })();
 
-function urlCheck(url) {
-   return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
+function sendToSanomapro(answers, questionType) {
+	switch(questionType) {
+		case 0:
+			const containers = document.querySelectorAll("app-text-entry-interaction")
+			for (let i=0; i<containers.length; i++) {
+				if (containers[i].querySelector("iframe")) {
+					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
+					answerElement.innerHTML = ""
+					for (let j of answers[i]) {
+						if (j.type === "textContent" || j.type === "text") {
+							const text = document.createElement("div")
+							text.textContent = j.text
+							answerElement.appendChild(text)
+						}
+						else if (j.type === "img") {
+							const div = document.createElement("div")
+							const img = document.createElement("img")
+							const br = document.createElement("br")
+							img.src = j.src
+							img.alt = j.alt
+							div.appendChild(img)
+							div.appendChild(br)
+							answerElement.appendChild(div)
+						}
+						else if (j.type === "br") {
+							const br = document.createElement("br")
+							answerElement.appendChild(br)
+						}
+					}
+				}
+				else if (containers[i].querySelector("textarea")) {
+					containers[i].querySelector("textarea").value = answers[i][0].text
+				}
+			}
+			break;
+		case 1:
+			break;
+	}
 }
 
 function initSanomapro(url) {
@@ -43,12 +88,11 @@ function saveSanomapro(url) {
 	const options = {
 		method: 'POST',
 		headers: {
-		  'Accept': 'application/json',
+		  'Access-Control-Request-Headers': '*',
 		  'Content-Type': 'application/json',
-		  'apiKey': "Y2AFVQjnzp0gnzZF8i2LGrBkPeP6oYUedFSaCv0ZbWyRKLWQraub34qgeJJLM3vP"
+		  'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
 		},
 		body: JSON.stringify({
-			
 			"dataSource": "Cluster0",
 			"database": "sites",
 			"collection": "sanomapro",
@@ -58,27 +102,55 @@ function saveSanomapro(url) {
 				questionPath,
 				answers,
 				timestamp: new Date().getTime(),
-				assignmentName
+				assignmentName,
 			}
 			
 		})
 	}
 
-	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertDocument');
+	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
 	fetch(newUrl, options).then(response => response.json()).then(data => console.log(data));
 
 }
 
 function getSanomaAnswers(type) {
-	answers = {}
-	if(type === 0) {
-
-	}
-	else if(type === 1) {
-
-	}
-	else if(type === 2) {
-
+	const answers = []
+	switch(type) {
+		case 0:
+			const containers = document.querySelectorAll("app-text-entry-interaction")
+			for (let i of containers) {
+				const tempAnswers = []
+				if (i.querySelector("iframe")) {
+					const answerElement = i.querySelector("iframe").contentWindow.document.querySelector(".answer")
+					for (let j of answerElement.childNodes) {
+						if (j.nodeName === "#text") {
+							tempAnswers.push({type: "textContent", text: j.textContent})
+						}
+						else if (j.nodeName === "DIV") {
+							if (j.firstChild.nodeName === "IMG") {
+								tempAnswers.push({type: "img", src: j.firstChild.src, alt: j.firstChild.alt})
+							}
+							else if (j.firstChild.nodeName === "BR") {
+								tempAnswers.push({type: "br"})
+							} else if (j.firstChild.nodeName === "#text") {
+								tempAnswers.push({type: "text", text: j.firstChild.textContent})
+							}
+						}
+					}
+				}
+				else if (i.querySelector("textarea")) {
+					tempAnswers.push({type: "textarea", text: i.querySelector("textarea").value})
+				}
+				answers.push(tempAnswers)
+			}
+			console.log(answers)
+			break;
+		case 1:
+			
+			break;
+		case 2:
+			
+			break;
 	}
 	return answers
 }
