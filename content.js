@@ -36,16 +36,10 @@ function sendToSanomapro(answers, questionType) {
 						else if (j.type === "img") {
 							const div = document.createElement("div")
 							const img = document.createElement("img")
-							const br = document.createElement("br")
 							img.src = j.src
 							img.alt = j.alt
 							div.appendChild(img)
-							div.appendChild(br)
 							answerElement.appendChild(div)
-						}
-						else if (j.type === "br") {
-							const br = document.createElement("br")
-							answerElement.appendChild(br)
 						}
 					}
 				}
@@ -130,11 +124,12 @@ function getSanomaAnswers(type) {
 							if (j.firstChild.nodeName === "IMG") {
 								tempAnswers.push({type: "img", src: j.firstChild.src, alt: j.firstChild.alt})
 							}
-							else if (j.firstChild.nodeName === "BR") {
-								tempAnswers.push({type: "br"})
-							} else if (j.firstChild.nodeName === "#text") {
+							else if (j.firstChild.nodeName === "#text") {
 								tempAnswers.push({type: "text", text: j.firstChild.textContent})
 							}
+						}
+						else if (j.nodeName === "IMG"){
+							tempAnswers.push({type: "img", src: j.src, alt: j.alt})
 						}
 					}
 				}
