@@ -2,29 +2,33 @@
 	chrome.runtime.onMessage.addListener((obj, sender) => {
 		if (obj.type === "init") {
 			if (obj.site === "sanomapro") {
-				initSanomapro();
+				initSanomapro(obj.url);
 			} else if (obj.site === "otava") {
-				initOtava();
+				initOtava(obj.url);
 			}
 		}
 	})
 })();
 
-function initSanomapro() {
+function urlCheck(url) {
+   return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
+}
+
+function initSanomapro(url) {
 	console.log("Initializing Sanomapro")
 	setTimeout(() => {
 		const button = document.createElement("button");
 		button.innerText = "Tallenna";
 		button.id = "save-button";
 		button.style.cssText = "font-size:14px;position:absolute;left:150px;"
-		button.addEventListener("click", () => saveSanomapro());
+		button.addEventListener("click", () => saveSanomapro(url));
 		const buttonContainer = document.querySelector("app-module-content-buttons").firstChild.firstChild;
 		buttonContainer.appendChild(button);
-	}, 1500);
+	}, 1000);
 
 }  
 
-function saveSanomapro() {
+function saveSanomapro(url) {
 	const questionTypeMap = {
 		"OpenQuestionModelAnswerInteraction": 0,
 		"ClozeCombiInteraction": 1,
@@ -32,22 +36,21 @@ function saveSanomapro() {
 	};
 
 	const questionType = questionTypeMap[document.querySelector("app-document").getAttribute("content-type")]
-	const questionPath = getCurrentTab().url.split("content-feed/")[1]
+	const questionPath = url.split("content-feed/")[1]
 	const answers = getSanomaAnswers(questionType)
 	const assignmentName = document.querySelector("app-module-content-title").textContent
 
 	const options = {
-		url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertDocument",
 		method: 'POST',
 		headers: {
 		  'Accept': 'application/json',
 		  'Content-Type': 'application/json',
-		  'apiKey': APIKEY
+		  'apiKey': "Y2AFVQjnzp0gnzZF8i2LGrBkPeP6oYUedFSaCv0ZbWyRKLWQraub34qgeJJLM3vP"
 		},
-		data: JSON.stringify({
+		body: JSON.stringify({
 			
-			"dataSource": "mongodb-atlas",
-			"database": "Cluster0",
+			"dataSource": "Cluster0",
+			"database": "sites",
 			"collection": "sanomapro",
 			"document": {
 				name: getName(),
@@ -61,9 +64,8 @@ function saveSanomapro() {
 		})
 	}
 
-	axios(options).then(response => {
-    	console.log(response.status);
-	});
+	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertDocument');
+	fetch(newUrl, options).then(response => response.json()).then(data => console.log(data));
 
 }
 
@@ -86,6 +88,6 @@ function getName() {
 }
 
 
-function initOtava() {
+function initOtava(url) {
 	console.log("Otava");
 }

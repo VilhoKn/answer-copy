@@ -1,7 +1,7 @@
 
 
-document.addEventListener('DOMContentLoaded', () => {
-	const currentUrl = getCurrentTab().url
+document.addEventListener('DOMContentLoaded', async () => {
+	const currentUrl = await getCurrentTab().url
 	if (!urlCheck(currentUrl)) {
 		document.querySelector(".error").style.display = "block"
 		return
@@ -27,12 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	const options = {
-		url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find",
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'apiKey': APIKEY
+			'apiKey': "APIKEY"
 		},
 		data: JSON.stringify({
 			
@@ -47,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	axios(options).then(response => {
+	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
+	fetch(newUrl, options).then(response => {
 		if(response.data) {
 			document.querySelector(".header-assignment").textContent = response.data[0].assignmentName
 			const answerContainer = document.querySelector(".answer-entry-container")
@@ -64,4 +64,14 @@ function addNewEntryElement(entry, parent) {
 	entryTitle.textContent = entry.name
 	entryContainer.appendChild(entryTitle)
 	parent.appendChild(entryContainer)
+}
+
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
+
+function urlCheck(url) {
+   return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
 }
