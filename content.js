@@ -69,7 +69,7 @@ function initSanomapro(url) {
 		button.addEventListener("click", () => saveSanomapro(url));
 		const buttonContainer = document.querySelector("app-module-content-buttons").firstChild.firstChild;
 		buttonContainer.appendChild(button);
-	}, 1000);
+	}, 2000);
 
 }  
 
