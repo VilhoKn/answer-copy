@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			"filter": {
 				"questionPath":""
 			},
-			"sort": { "timestamp": 1 },
+			"sort": { "timestamp": -1 },
 			"limit": 10
 		}
 	}
@@ -73,9 +73,13 @@ function addNewEntryElement(entry, parent) {
 		sendToWebsite(entry.answers, entry.questionType)
 	})
 	const entryTitle = document.createElement("h1")
+	const entryDate = document.createElement("p")
+	entryDate.classList.add("entry-date")
 	entryTitle.classList.add("entry-title")
 	entryTitle.textContent = entry.name
+	entryDate.textContent = new Date(entry.timestamp).toLocaleString()
 	entryContainer.appendChild(entryTitle)
+	entryContainer.appendChild(entryDate)
 	parent.appendChild(entryContainer)
 }
 

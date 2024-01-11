@@ -79,6 +79,10 @@ function saveSanomapro(url) {
 	const answers = getSanomaAnswers(questionType)
 	const assignmentName = document.querySelector("app-module-content-title").textContent
 
+	if (answers.length === 0) {
+		return
+	}
+
 	const options = {
 		method: 'POST',
 		headers: {

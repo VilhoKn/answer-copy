@@ -1,16 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f2f2f2;
-    width: 200px;
-    height: 100px;
-    border-radius: 20px;
+html {
+	height: 100%;
+	width: 100%;
+}
 
+body {
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f2f2f2;
+    width: 350px;
+    height: 200px;
 }
 
 .name-container {
@@ -19,4 +24,40 @@ body {
 
 .error {
     display: none;
+	position: absolute;
+	width: 250px;
+    top: 50%;  
+    left: 50%; 
+    transform: translate(-50%, -50%);
+}
+
+.header-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin: 10px;
+}
+
+.header-site {
+	font-size: 20px;
+	color: #333;
+}
+
+.answer-entry-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.entry-container {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	width: 300px;
+	cursor: pointer;
+	border: 1px solid #333;
+	border-radius: 5px;
+	margin-bottom: 3px;
 }
