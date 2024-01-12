@@ -4,6 +4,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
 	chrome.storage.local.get("nimi").then(res => {
 		sendRes({"nimi": res.nimi ? res.nimi : null})
 	})
+	return true
 })
 
 document.addEventListener('DOMContentLoaded', async () => {
