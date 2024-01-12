@@ -26,22 +26,7 @@ function sendToSanomapro(answers, questionType) {
 			for (let i=0; i<containers.length; i++) {
 				if (containers[i].querySelector("iframe")) {
 					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
-					answerElement.innerHTML = ""
-					for (let j of answers[i]) {
-						if (j.type === "textContent" || j.type === "text") {
-							const text = document.createElement("div")
-							text.textContent = j.text
-							answerElement.appendChild(text)
-						}
-						else if (j.type === "img") {
-							const div = document.createElement("div")
-							const img = document.createElement("img")
-							img.src = j.src
-							img.alt = j.alt
-							div.appendChild(img)
-							answerElement.appendChild(div)
-						}
-					}
+					answerElement.innerHTML = answers[i]
 				}
 				else if (containers[i].querySelector("textarea")) {
 					containers[i].querySelector("textarea").value = answers[i][0].text
@@ -150,22 +135,7 @@ function getSanomaAnswers(type) {
 				const tempAnswers = []
 				if (i.querySelector("iframe")) {
 					const answerElement = i.querySelector("iframe").contentWindow.document.querySelector(".answer")
-					for (let j of answerElement.childNodes) {
-						if (j.nodeName === "#text") {
-							tempAnswers.push({type: "textContent", text: j.textContent})
-						}
-						else if (j.nodeName === "DIV") {
-							if (j.firstChild.nodeName === "IMG") {
-								tempAnswers.push({type: "img", src: j.firstChild.src, alt: j.firstChild.alt})
-							}
-							else if (j.firstChild.nodeName === "#text") {
-								tempAnswers.push({type: "text", text: j.firstChild.textContent})
-							}
-						}
-						else if (j.nodeName === "IMG"){
-							tempAnswers.push({type: "img", src: j.src, alt: j.alt})
-						}
-					}
+					tempAnswers.push({type: "text", text: answerElement.innerHTML})
 				}
 				else if (i.querySelector("textarea")) {
 					tempAnswers.push({type: "textarea", text: i.querySelector("textarea").value})

@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
 	if (!obj.type === "nimi") return
-	chrome.local.get("nimi").then(res => {
+	chrome.storage.local.get("nimi").then(res => {
 		sendRes({"nimi": res.nimi ? res.nimi : null})
 	})
 })
