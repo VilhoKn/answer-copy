@@ -79,12 +79,37 @@ function saveSanomapro(url) {
 	const answers = getSanomaAnswers(questionType)
 	const assignmentName = document.querySelector("app-module-content-title").textContent
 
-	if (answers.length === 0) {
-		return
-	}
+	if (answers.length === 0) return
 	const submitter = getName()
-	console.log(submitter)
+	console.log(submitter, "submitter")
+
+	if (!submitter) return
+
+	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
+	const optionsFind = {
+		method: 'POST',
+		headers: {
+			'Access-Control-Request-Headers': '*',
+			'Content-Type': 'application/json',
+			'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
+		},
+		body: {
+			"dataSource": "Cluster0",
+			"database": "sites",
+			"collection": "sanomapro",
+			"filter": {
+				questionPath,
+				submitter
+			},
+			"sort": { "timestamp": -1 },
+			"limit": 10
+		}
+	}
+
+	fetch(findUrl, options).then(res => res.json()).then(response =>{
+		if (response.documents.length > 3) return
+	});
 
 	const options = {
 		method: 'POST',
@@ -98,7 +123,7 @@ function saveSanomapro(url) {
 			"database": "sites",
 			"collection": "sanomapro",
 			"document": {
-				"submitter": "",
+				submitter,
 				questionType,
 				questionPath,
 				answers,
