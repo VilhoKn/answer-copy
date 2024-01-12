@@ -20,6 +20,11 @@
 	],
 	"permissions": [
 		"tabs",
-		"storage"
+		"storage",
+		"scripting"
+	],
+	"host_permissions": [
+		"*://kampus.sanomapro.fi/content-feed/*",
+		"*://materiaalit.otava.fi/web/*"
 	]
 }
