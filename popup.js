@@ -1,9 +1,13 @@
-
+chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
+	if (!obj.type === "nimi") return
+	chrome.local.get("nimi").then(res => {
+		sendRes({"nimi": res.nimi ? res.nimi : null})
+	})
+})
 
 document.addEventListener('DOMContentLoaded', async () => {
 	getCurrentTab().then(tab => {
 		if (!(urlCheck(tab.url))) {
-			console.log(urlCheck(tab.url), "cehc")
 			document.querySelector(".error").style.display = "block"
 			return
 		} else {
@@ -54,7 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		options.body.filter.questionPath = questionPath
 		options.body = JSON.stringify(options.body)
 		fetch(newUrl, options).then(res => res.json()).then(response =>{
-			console.log(response, "response", response.documents)
 			if(response.documents.length > 0) {
 				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName
 				const answerContainer = document.querySelector(".answer-entry-container")
@@ -95,6 +98,5 @@ async function getCurrentTab() {
 }
 
 function urlCheck(url) {
-	console.log(url, "check")
 	return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
 }

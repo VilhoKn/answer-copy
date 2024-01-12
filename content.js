@@ -82,6 +82,9 @@ function saveSanomapro(url) {
 	if (answers.length === 0) {
 		return
 	}
+	const submitter = getName()
+	console.log(submitter)
+	
 
 	const options = {
 		method: 'POST',
@@ -95,7 +98,7 @@ function saveSanomapro(url) {
 			"database": "sites",
 			"collection": "sanomapro",
 			"document": {
-				name: getName(),
+				"submitter": "",
 				questionType,
 				questionPath,
 				answers,
@@ -107,6 +110,8 @@ function saveSanomapro(url) {
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
+
+	
 	fetch(newUrl, options).then(response => response.json()).then(data => console.log(data));
 
 }
@@ -155,7 +160,9 @@ function getSanomaAnswers(type) {
 }
 
 function getName() {
-	return "Vilho"
+	chrome.runtime.sendMessage({type: "nimi"}, res => {
+		return res.nimi
+	})
 }
 
 
