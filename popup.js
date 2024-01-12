@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	chrome.storage.local.get("nimi").then(res => {
 		if(!res.nimi) {
 			const nameContainer = document.querySelector(".name-container")
-			nameContainer.style.display = "block"
+			nameContainer.style.display = "flex"
 			const nameInput = document.querySelector(".name-input")
 			nameInput.addEventListener("keydown", e => {
 				if (e.key === "Enter") {
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
-
+	
 	getCurrentTab().then(tab => {
 		const site = tab.url.includes("sanomapro") ? "sanomapro" : "otava"
 		const questionPath = site === "sanomapro" ? tab.url.split("content-feed/")[1] : ""
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		options.body = JSON.stringify(options.body)
 		fetch(newUrl, options).then(res => res.json()).then(response =>{
 			if(response.documents.length > 0) {
+				document.querySelector(".name-container").style.top = "85%"
 				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName
 				const answerContainer = document.querySelector(".answer-entry-container")
 				for(let entry of response.documents) {
