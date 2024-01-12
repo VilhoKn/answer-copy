@@ -8,3 +8,4 @@ chrome.tabs.onUpdated.addListener((tabId, tab) => {
         chrome.tabs.sendMessage(tabId, {type: "init", site: tab.url.split(".")[1], url: tab.url});
     }
 });
+

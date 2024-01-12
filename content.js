@@ -26,10 +26,11 @@ function sendToSanomapro(answers, questionType) {
 			for (let i=0; i<containers.length; i++) {
 				if (containers[i].querySelector("iframe")) {
 					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
-					answerElement.innerHTML = answers[i]
+					console.log(answers, answers[i], answers[i].text, answerElement)
+					answerElement.innerHTML = answers[i].text
 				}
 				else if (containers[i].querySelector("textarea")) {
-					containers[i].querySelector("textarea").value = answers[i][0].text
+					containers[i].querySelector("textarea").value = answers[i].text
 				}
 			}
 			break;
@@ -65,10 +66,6 @@ function saveSanomapro(url) {
 	const assignmentName = document.querySelector("app-module-content-title").textContent
 
 	if (answers.length === 0) return
-	const submitter = getName()
-	console.log(submitter, "submitter")
-
-	if (!submitter) return
 
 	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
@@ -85,16 +82,12 @@ function saveSanomapro(url) {
 			"collection": "sanomapro",
 			"filter": {
 				questionPath,
-				submitter
+				"name":""
 			},
 			"sort": { "timestamp": -1 },
 			"limit": 10
 		}
 	}
-
-	fetch(findUrl, options).then(res => res.json()).then(response =>{
-		if (response.documents.length > 3) return
-	});
 
 	const options = {
 		method: 'POST',
@@ -103,27 +96,37 @@ function saveSanomapro(url) {
 		  'Content-Type': 'application/json',
 		  'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
 		},
-		body: JSON.stringify({
+		body: {
 			"dataSource": "Cluster0",
 			"database": "sites",
 			"collection": "sanomapro",
 			"document": {
-				submitter,
+				"name": "",
 				questionType,
 				questionPath,
 				answers,
 				timestamp: new Date().getTime(),
 				assignmentName,
+				site: "sanomapro"
 			}
 			
-		})
+		}
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
-
 	
-	fetch(newUrl, options).then(response => response.json()).then(data => console.log(data));
-
+	chrome.runtime.sendMessage({type: "nimi"}, res => {
+		if (!res?.nimi) return
+		options.body.document.name = res.nimi
+		optionsFind.body.filter.name = res.nimi
+		options.body = JSON.stringify(options.body)
+		optionsFind.body = JSON.stringify(optionsFind.body)
+		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
+			if (response.documents.length < 3) {
+				fetch(newUrl, options).then(resp => resp.json()).then(data => console.log(data));
+			}
+		});
+	})
 }
 
 function getSanomaAnswers(type) {
@@ -132,15 +135,13 @@ function getSanomaAnswers(type) {
 		case 0:
 			const containers = document.querySelectorAll("app-text-entry-interaction")
 			for (let i of containers) {
-				const tempAnswers = []
 				if (i.querySelector("iframe")) {
 					const answerElement = i.querySelector("iframe").contentWindow.document.querySelector(".answer")
-					tempAnswers.push({type: "text", text: answerElement.innerHTML})
+					answers.push({type: "text", text: answerElement.innerHTML})
 				}
 				else if (i.querySelector("textarea")) {
-					tempAnswers.push({type: "textarea", text: i.querySelector("textarea").value})
+					answers.push({type: "textarea", text: i.querySelector("textarea").value})
 				}
-				answers.push(tempAnswers)
 			}
 			console.log(answers)
 			break;
@@ -153,13 +154,6 @@ function getSanomaAnswers(type) {
 	}
 	return answers
 }
-
-function getName() {
-	chrome.runtime.sendMessage({type: "nimi"}, res => {
-		return res.nimi
-	})
-}
-
 
 function initOtava(url) {
 	console.log("Otava");
