@@ -19,9 +19,10 @@
 })();
 
 function sendToSanomapro(answers, questionType) {
+	let containers;
 	switch(questionType) {
 		case 0:
-			const containers = document.querySelectorAll("app-text-entry-interaction")
+			containers = document.querySelectorAll("app-text-entry-interaction")
 			for (let i=0; i<containers.length; i++) {
 				if (containers[i].querySelector("iframe")) {
 					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
@@ -33,6 +34,12 @@ function sendToSanomapro(answers, questionType) {
 			}
 			break;
 		case 1:
+			containers = document.querySelectorAll("app-extended-text-interaction")
+			for (let i=0; i<containers.length; i++) {
+				if (containers[i].querySelector("textarea")) {
+					containers[i].querySelector("textarea").value = answers[i].text
+				}
+			}
 			break;
 	}
 }
@@ -61,7 +68,7 @@ function initSanomapro(url) {
 function saveSanomapro(url) {
 	const questionTypeMap = {
 		"OpenQuestionModelAnswerInteraction": 0,
-		"ClozeCombiInteraction": 1,
+		"ExtendedTextInteraction": 1,
 		"ChoiceInteractionXopus": 2,
 	};
 
@@ -138,9 +145,10 @@ function saveSanomapro(url) {
 
 function getSanomaAnswers(type) {
 	const answers = []
+	let containers;
 	switch(type) {
 		case 0:
-			const containers = document.querySelectorAll("app-text-entry-interaction")
+			containers = document.querySelectorAll("app-text-entry-interaction")
 			for (let i of containers) {
 				if (i.querySelector("iframe")) {
 					const answerElement = i.querySelector("iframe").contentWindow.document.querySelector(".answer")
@@ -152,7 +160,12 @@ function getSanomaAnswers(type) {
 			}
 			break;
 		case 1:
-			
+			containers = document.querySelectorAll("app-extended-text-interaction")
+			for (let i of containers) {
+				if (i.querySelector("textarea")) {
+					answers.push({type: "textarea", text: i.querySelector("textarea").value})
+				}
+			}
 			break;
 		case 2:
 			
