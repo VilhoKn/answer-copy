@@ -1,11 +1,4 @@
-chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
-	if (!obj.type === "nimi") return
-	console.log("Received nimi", obj)
-	chrome.storage.local.get("nimi").then(res => {
-		sendRes({"nimi": res.nimi ? res.nimi : null})
-	})
-	return true
-})
+
 
 document.addEventListener('DOMContentLoaded', async () => {
 	getCurrentTab().then(tab => {
@@ -95,8 +88,8 @@ function addNewEntryElement(entry, parent) {
 	entryText.appendChild(entryDate)
 	entryContainer.appendChild(entryText)
 
-	chrome.storage.local.get("nimi").then(res => {
-		if (res.nimi === entry.name) {
+	chrome.storage.local.get(["nimi", "admin"]).then(res => {
+		if (res.nimi === entry.name || res.admin) {
 			const entryDelete = document.createElement("button")
 			entryDelete.classList.add("entry-delete")
 			entryDelete.textContent = "X"

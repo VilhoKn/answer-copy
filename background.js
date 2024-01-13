@@ -9,3 +9,23 @@ chrome.tabs.onUpdated.addListener((tabId, tab) => {
     }
 });
 
+chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
+	if (!obj.type === "nimi") return
+	console.log("Received nimi", obj)
+	chrome.storage.local.get("nimi").then(res => {
+		sendRes({"nimi": res.nimi ? res.nimi : null})
+	})
+	return true
+})
+
+chrome.runtime.onInstalled.addListener(async () => {
+    for (const cs of chrome.runtime.getManifest().content_scripts) {
+      for (const tab of await chrome.tabs.query({url: cs.matches})) {
+        chrome.scripting.executeScript({
+          target: {tabId: tab.id},
+          files: cs.js,
+        });
+      }
+    }
+  });
+
