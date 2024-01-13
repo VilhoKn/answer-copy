@@ -34,6 +34,8 @@ body {
 	text-align: center;
 	font-size: 20px;
 	width: 150px;
+	border: 1px solid #333;
+	border-radius: 5px;
 }
 
 .error {
@@ -91,6 +93,10 @@ body {
 
 .entry-delete:hover {
 	background-color: #9c0202;
+}
+
+.entry-delete:focus {
+	background-color: #740303;
 }	
 
 .entry-text {

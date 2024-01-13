@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
 	getCurrentTab().then(tab => {
+		if (!urlCheck(tab.url)) return
 		const site = tab.url.includes("sanomapro") ? "sanomapro" : "otava"
 		const questionPath = site === "sanomapro" ? tab.url.split("content-feed/")[1] : ""
 		options.body.collection = site
@@ -61,6 +62,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 				for(let entry of response.documents) {
 					addNewEntryElement(entry, answerContainer)
 				}
+			} else {
+				document.querySelector(".name-container").style.top = "75%"
 			}
 		});
 	})

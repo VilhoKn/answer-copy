@@ -4,14 +4,12 @@ function urlCheck(url) {
 
 chrome.tabs.onUpdated.addListener((tabId, tab) => {
     if (urlCheck(tab.url)) {
-        console.log("Sending message to", tab.url);
         chrome.tabs.sendMessage(tabId, {type: "init", site: tab.url.split(".")[1], url: tab.url});
     }
 });
 
 chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
 	if (!obj.type === "nimi") return
-	console.log("Received nimi", obj)
 	chrome.storage.local.get("nimi").then(res => {
 		sendRes({"nimi": res.nimi ? res.nimi : null})
 	})

@@ -8,7 +8,6 @@
 			}
 		}
 		if (obj.type === "send") {
-			console.log("Sending", obj.answers)
 			if (obj.site === "sanomapro") {
 				sendToSanomapro(obj.answers, obj.questionType)
 			}
@@ -26,7 +25,6 @@ function sendToSanomapro(answers, questionType) {
 			for (let i=0; i<containers.length; i++) {
 				if (containers[i].querySelector("iframe")) {
 					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
-					console.log(answers, answers[i], answers[i].text, answerElement)
 					answerElement.innerHTML = answers[i].text
 				}
 				else if (containers[i].querySelector("textarea")) {
@@ -43,10 +41,17 @@ function initSanomapro(url) {
 	console.log("Initializing Sanomapro")
 	setTimeout(() => {
 		const button = document.createElement("button");
+		button.classList.add("save-button");
 		button.innerText = "Tallenna";
 		button.id = "save-button";
-		button.style.cssText = "font-size:14px;position:absolute;left:150px;"
+		button.style.cssText = "font-size:14px;position:absolute;left:150px;border:1.2px solid rgb(100, 54, 149);border-radius:4px;padding:11px;cursor:pointer;background-color:white;color:rgb(100, 54, 149);font-weight:600;"
 		button.addEventListener("click", () => saveSanomapro(url));
+		button.addEventListener("mouseover", () => {
+			button.style.backgroundColor = "#f0ecf5";
+		});
+		button.addEventListener("mouseout", () => {
+			button.style.backgroundColor = "white";
+		});
 		const buttonContainer = document.querySelector("app-module-content-buttons").firstChild.firstChild;
 		buttonContainer.appendChild(button);
 	}, 2000);
@@ -118,7 +123,6 @@ function saveSanomapro(url) {
 	
 
 	chrome.runtime.sendMessage({type: "nimi"}, res => {
-		console.log(res)
 		if (!res.nimi) return
 		options.body.document.name = res.nimi
 		optionsFind.body.filter.name = res.nimi
@@ -126,7 +130,7 @@ function saveSanomapro(url) {
 		optionsFind.body = JSON.stringify(optionsFind.body)
 		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
 			if (response.documents.length < 3) {
-				fetch(newUrl, options).then(resp => resp.json()).then(data => console.log(data));
+				fetch(newUrl, options)
 			}
 		});
 	})
@@ -146,7 +150,6 @@ function getSanomaAnswers(type) {
 					answers.push({type: "textarea", text: i.querySelector("textarea").value})
 				}
 			}
-			console.log(answers)
 			break;
 		case 1:
 			
