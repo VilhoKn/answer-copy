@@ -46,13 +46,20 @@ function sendToSanomapro(answers, questionType) {
 
 function initSanomapro(url) {
 	console.log("Initializing Sanomapro")
-	setTimeout(() => {
+	const checkExists = setInterval(() => {
+		if (!document.querySelector("app-module-content-buttons")) return
+		clearInterval(checkExists);
 		const button = document.createElement("button");
 		button.classList.add("save-button");
 		button.innerText = "Tallenna";
 		button.id = "save-button";
 		button.style.cssText = "font-size:14px;position:absolute;left:150px;border:1.2px solid rgb(100, 54, 149);border-radius:4px;padding:11px;cursor:pointer;background-color:white;color:rgb(100, 54, 149);font-weight:600;"
-		button.addEventListener("click", () => saveSanomapro(url));
+		button.addEventListener("click", () => {
+			button.style.backgroundColor = "rgb(100, 54, 149)"
+			button.style.color = "white"
+			setTimeout(() => {button.style.backgroundColor = "white"; button.style.color = "rgb(100, 54, 149)"}, 150)
+			saveSanomapro(url)
+		});
 		button.addEventListener("mouseover", () => {
 			button.style.backgroundColor = "#f0ecf5";
 		});
@@ -61,7 +68,8 @@ function initSanomapro(url) {
 		});
 		const buttonContainer = document.querySelector("app-module-content-buttons").firstChild.firstChild;
 		buttonContainer.appendChild(button);
-	}, 2000);
+		console.log("Sanomapro initialized")
+	}, 100);
 
 }  
 
