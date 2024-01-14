@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 	getCurrentTab().then(tab => {
 		if (!urlCheck(tab.url)) return
 		const site = tab.url.includes("sanomapro") ? "sanomapro" : "otava"
-		const questionPath = site === "sanomapro" ? tab.url.split("content-feed/")[1] : ""
+		const questionPath = site === "sanomapro" ? tab.url.split("content-feed/")[1] : tab.url.split("web/")[1]
 		options.body.collection = site
 		options.body.filter.questionPath = questionPath
 		options.body = JSON.stringify(options.body)
 		fetch(newUrl, options).then(res => res.json()).then(response =>{
 			if(response.documents.length > 0) {
 				document.querySelector(".name-container").style.top = "85%"
-				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName
+				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName.length <= 25 ? response.documents[0].assignmentName : response.documents[0].assignmentName.slice(0, 23) + "..."
 				const answerContainer = document.querySelector(".answer-entry-container")
 				for(let entry of response.documents) {
 					addNewEntryElement(entry, answerContainer)

@@ -12,7 +12,7 @@
 				sendToSanomapro(obj.answers, obj.questionType)
 			}
 			else if (obj.site === "otava") {
-				sendToOtava(obj.answers, questionType)
+				sendToOtava(obj.answers)
 			}
 		}
 	})
@@ -68,7 +68,6 @@ function initSanomapro(url) {
 		});
 		const buttonContainer = document.querySelector("app-module-content-buttons").firstChild.firstChild;
 		buttonContainer.appendChild(button);
-		console.log("Sanomapro initialized")
 	}, 100);
 
 }  
@@ -85,7 +84,10 @@ function saveSanomapro(url) {
 	const answers = getSanomaAnswers(questionType)
 	const assignmentName = document.querySelector("app-module-content-title").textContent
 
-	if (answers.length === 0) return
+	if (answers.length === 0) {
+		alert("Ei tuettu kysymystyyppi")
+		return
+	}
 
 	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
@@ -185,11 +187,13 @@ function getSanomaAnswers(type) {
 function initOtava(url) {
 	console.log("Initializing Otava")
 	const checkExists = setInterval(() => {
-		if (!document.querySelector(".cb-menu-list") || document.querySelector(".save-button")) return
+		if (!document.querySelector(".cb-menu-list")) return
 		clearInterval(checkExists);
 		const button = document.createElement("button");
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.style.cssText = "position:relative;width:50px;height:50px;"
+		document.querySelector(".save-button-wrapper")?.remove()
+		buttonWrapper.classList.add("save-button-wrapper")
 		button.classList.add("save-button");
 		button.innerText = "T";
 		button.id = "save-button";
@@ -210,7 +214,6 @@ function initOtava(url) {
 		const buttonContainer = document.querySelector(".cb-right-items").querySelector(".cb-menu-list");
 		buttonWrapper.appendChild(button)
 		buttonContainer.appendChild(buttonWrapper);
-		console.log("Otava initialized")
 	}, 100);
 
 }  
@@ -221,7 +224,10 @@ function saveOtava(url) {
 	const answers = getOtavaAnswers()
 	const assignmentName = document.querySelector(".o-topbar-breadcrumb").lastElementChild.textContent
 
-	if (answers.length === 0) return
+	if (answers.length === 0) {
+		alert("Ei tuettu kysymystyyppi")
+		return
+	}
 
 	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
@@ -258,7 +264,6 @@ function saveOtava(url) {
 			"collection": "otava",
 			"document": {
 				"name": "",
-				questionType,
 				questionPath,
 				answers,
 				timestamp: new Date().getTime(),
@@ -289,42 +294,83 @@ function saveOtava(url) {
 
 function getOtavaAnswers() {
 	const answers = []
-
+	const iframe = document.querySelector("iframe")?.contentWindow.document
 	const column = document.querySelectorAll(".column")[0]
-	const questionContainer = document.querySelector(".question-container")
 	if (column) {
-		for (let i of column.querySelectorAll(".item")) {
-			const parent = i.querySelector(".fr-element")
-			answers.push({type: "item-text", text: parent.innerHTML})
+		if (column.querySelector(".item")) {
+			for (let i of column.querySelectorAll(".item")) {
+				const parent = i.querySelector(".fr-element")
+				answers.push({type: "item-text", text: parent.innerHTML})
+			}
 		}
 	}
-	else if (questionContainer) {
-		
+	if (iframe && iframe.querySelector(".question-container")) {
+		for (let i of iframe.querySelectorAll(".question-container")) {
+			if (i.querySelector("textarea")) {
+				const parent = i.querySelector("textarea")
+				answers.push({type: "question-container-text", text: parent.value})
+			}
+			else if (i.querySelector(".matrix-content-columns")) {
+				const parent = i.querySelector(".matrix-content-columns")
+				const answerChoices = []
+				for (let j of parent.querySelectorAll(".section")) {
+					const tempArray = []
+					for (let k of j.querySelectorAll(".choice")) {
+						if (k.classList.contains("selected")) tempArray.push(Array.from(j.querySelectorAll(".choice")).indexOf(k))
+					}
+					answerChoices.push(tempArray)
+				}
+				answers.push({type: "question-matrix-choices", choices: answerChoices})
+			}
+			else if (i.querySelector(".multiplechoice")) {
+				const parent = i.querySelector(".multiplechoice")
+				answers.push({type: "question-multiple-choice", choice: Array.from(parent.querySelectorAll(".choice")).indexOf(parent.querySelector(".choice.selected"))})
+			}
+		}
 	}
+
+	console.log(answers, "answers")
+	return answers
 }
 
 function sendToOtava(answers) {
-	let containers;
-	switch(questionType) {
-		case 0:
-			containers = document.querySelectorAll("app-text-entry-interaction")
-			for (let i=0; i<containers.length; i++) {
-				if (containers[i].querySelector("iframe")) {
-					const answerElement = containers[i].querySelector("iframe").contentWindow.document.querySelector(".answer")
-					answerElement.innerHTML = answers[i].text
-				}
-				else if (containers[i].querySelector("textarea")) {
-					containers[i].querySelector("textarea").value = answers[i].text
+	const iframe = document.querySelector("iframe")?.contentWindow.document
+	const column = document.querySelectorAll(".column")[0]
+	if (column) {
+		if (column.querySelector(".item")) {
+			for (let i=0; i<column.querySelectorAll(".item").length; i++) {
+				const parent = column.querySelectorAll(".item")[i].querySelector(".fr-element")
+				parent.innerHTML = answers[i].text
+			}
+		}
+	}
+	if (iframe && iframe.querySelector(".question-container")) {
+		const parents = iframe.querySelectorAll(".question-container")
+		for (let i=0; i<parents.length; i++) {
+			if (parents[i].querySelector("textarea")) {
+				const parent = parents[i].querySelector("textarea")
+				parent.value = answers[i].text
+			}
+			else if (parents[i].querySelector(".matrix-content-columns")) {
+				const parent = parents[i].querySelector(".matrix-content-columns")
+				for (let j=0; j<parent.querySelectorAll(".section").length; j++) {
+					for (let k=0; k<parent.querySelectorAll(".section")[j].querySelectorAll(".choice-button").length; k++) {
+						console.log(answers[i].choices[j], k)
+						if (answers[i].choices[j].includes(k)) {
+							const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
+							if (!buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
+						}
+						else if (!answers[i].choices[j].includes(k)) {
+							const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
+							if (buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
+						}
+					}
 				}
 			}
-			break;
-		case 1:
-			containers = document.querySelectorAll("app-extended-text-interaction")
-			for (let i=0; i<containers.length; i++) {
-				if (containers[i].querySelector("textarea")) {
-					containers[i].querySelector("textarea").value = answers[i].text
-				}
+			else if (parents[i].querySelector(".multiplechoice")) {
+				const parent = parents[i].querySelector(".multiplechoice")
+				parent.querySelectorAll(".choice-button")[answers[i].choice].click()
 			}
-			break;
+		}
 	}
 }
