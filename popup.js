@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (response.document.version != VERSION) {
 			const versionText = document.createElement("p")
 			versionText.classList.add("version-text")
-			versionText.textContent = "Vanha versio ("+VERSION+")"
+			versionText.textContent = "Uusin versio "+response.document.version+" (nykyinen "+VERSION+")"
 			document.querySelector("body").appendChild(versionText)
 		}
 	});
