@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		body: {
 			"dataSource": "Cluster0",
 			"database": "version",
-			"collection": "version",
-			"limit": 1
+			"collection": "version"
 		}
 	}
 
@@ -23,8 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const versionUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/findOne');
 
 	fetch(versionUrl, optionsVersion).then(res => res.json()).then(response =>{
-		if (!response?.document?.version) null
-		else if (response.document.version != VERSION) {
+		if (!response?.document?.version) return
+		if (response.document.version != VERSION) {
 			const versionText = document.createElement("p")
 			versionText.classList.add("version-text")
 			versionText.textContent = "Vanha versio ("+VERSION+")"
