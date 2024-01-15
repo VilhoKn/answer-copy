@@ -1,4 +1,4 @@
-const VERSION = 1.0
+const VERSION = "1.0"
 
 
 
@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			'Content-Type': 'application/json',
 			'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
 		},
-		body: {
+		body: JSON.stringify({
 			"dataSource": "Cluster0",
 			"database": "version",
 			"collection": "version"
-		}
+		})
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
