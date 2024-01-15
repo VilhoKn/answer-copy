@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const versionUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/findOne');
 
 	fetch(versionUrl, optionsVersion).then(res => res.json()).then(response =>{
-		if(response.documents.length === 0) return
-		if (response.document.version != VERSION) {
+		if (!response?.document?.version) null
+		else if (response.document.version != VERSION) {
 			const versionText = document.createElement("p")
 			versionText.classList.add("version-text")
 			versionText.textContent = "Vanha versio ("+VERSION+")"
