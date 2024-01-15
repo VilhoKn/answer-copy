@@ -326,6 +326,10 @@ function getOtavaAnswers() {
 				const parent = i.querySelector(".multiplechoice")
 				answers.push({type: "question-multiple-choice", choice: Array.from(parent.querySelectorAll(".choice")).indexOf(parent.querySelector(".choice.selected"))})
 			}
+			else if (i.querySelector(".fr-element")){
+				const parent = i.querySelector(".fr-element")
+				answers.push({type: "container-text", text: parent.innerHTML})
+			}
 		}
 	}
 
@@ -370,6 +374,10 @@ function sendToOtava(answers) {
 			else if (parents[i].querySelector(".multiplechoice")) {
 				const parent = parents[i].querySelector(".multiplechoice")
 				parent.querySelectorAll(".choice-button")[answers[i].choice].click()
+			}
+			else if (parents[i].querySelector(".fr-element")){
+				const parent = parents[i].querySelector(".fr-element")
+				parent.innerHTML = answers[i].text
 			}
 		}
 	}
