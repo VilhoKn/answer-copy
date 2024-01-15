@@ -285,6 +285,7 @@ function saveOtava(url) {
 		optionsFind.body = JSON.stringify(optionsFind.body)
 		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
 			if (response.documents.length < 3) {
+				fetch(newUrl, options)
 			}
 		});
 	})
