@@ -1,6 +1,36 @@
+const VERSION = 1.0
+
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+	const optionsVersion = {
+		method: 'POST',
+		headers: {
+			'Access-Control-Request-Headers': '*',
+			'Content-Type': 'application/json',
+			'api-key': "D3bSVpjbj1xU42dhFznHcUfiGhQdzPw4KXHzHfpFYoJgwSJnSRLtuvrbaqmxwcF2"
+		},
+		body: {
+			"dataSource": "Cluster0",
+			"database": "version",
+			"collection": "version",
+			"limit": 1
+		}
+	}
+
+	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
+	const versionUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/findOne');
+
+	fetch(versionUrl, optionsVersion).then(res => res.json()).then(response =>{
+		if(response.documents.length === 0) return
+		if (response.document.version != VERSION) {
+			const versionText = document.createElement("p")
+			versionText.classList.add("version-text")
+			versionText.textContent = "Vanha versio ("+VERSION+")"
+		}
+	});
+
 	getCurrentTab().then(tab => {
 		if (!(urlCheck(tab.url))) {
 			document.querySelector(".error").style.display = "block"
@@ -44,8 +74,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			"limit": 10
 		}
 	}
-
-	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
 	
 	getCurrentTab().then(tab => {
 		if (!urlCheck(tab.url)) return
