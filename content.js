@@ -50,6 +50,7 @@ function initSanomapro(url) {
 		if (!document.querySelector("app-module-content-buttons")) return
 		clearInterval(checkExists);
 		const button = document.createElement("button");
+		document.querySelector(".save-button")?.remove()
 		button.classList.add("save-button");
 		button.innerText = "Tallenna";
 		button.id = "save-button";
@@ -199,8 +200,8 @@ function initOtava(url) {
 		button.id = "save-button";
 		button.style.cssText = "position:absolute;bottom:0;left:0;font-size:20px;cursor:pointer;color:white;background-color:black;border-radius:50%;width:40px;height:40px;border:none;"
 		button.addEventListener("click", () => {
-			button.style.color = "grey"
-			setTimeout(() => {button.style.backgroundColor = "black"}, 150)
+			button.style.backgroundColor = "grey"
+			setTimeout(() => {button.style.backgroundColor = "black"; button.style.color = "white"}, 150)
 			saveOtava(url)
 		});
 		button.addEventListener("mouseover", () => {
@@ -275,8 +276,6 @@ function saveOtava(url) {
 	}
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
-	
-	
 
 	chrome.runtime.sendMessage({type: "nimi"}, res => {
 		if (!res.nimi) return
@@ -286,7 +285,6 @@ function saveOtava(url) {
 		optionsFind.body = JSON.stringify(optionsFind.body)
 		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
 			if (response.documents.length < 3) {
-				fetch(newUrl, options)
 			}
 		});
 	})
@@ -359,7 +357,6 @@ function sendToOtava(answers) {
 				const parent = parents[i].querySelector(".matrix-content-columns")
 				for (let j=0; j<parent.querySelectorAll(".section").length; j++) {
 					for (let k=0; k<parent.querySelectorAll(".section")[j].querySelectorAll(".choice-button").length; k++) {
-						console.log(answers[i].choices[j], k)
 						if (answers[i].choices[j].includes(k)) {
 							const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
 							if (!buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()

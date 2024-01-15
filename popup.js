@@ -169,5 +169,5 @@ async function getCurrentTab() {
 }
 
 function urlCheck(url) {
-	return url && ((url.includes("kampus.sanomapro.fi/content-feed") && url.includes("item")) || url.includes("materiaalit.otava.fi/web/"))
+	return url && (url.includes("kampus.sanomapro.fi/content-feed") || url.includes("materiaalit.otava.fi/web/"))
 }

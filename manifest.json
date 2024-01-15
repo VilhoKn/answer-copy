@@ -14,7 +14,7 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["*://kampus.sanomapro.fi/content-feed/*", "*://materiaalit.otava.fi/web/*"], 
+			"matches": ["*://kampus.sanomapro.fi/*", "*://materiaalit.otava.fi/web/*"], 
 			"js": ["content.js"]
 		}
 	],
