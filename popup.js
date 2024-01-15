@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const versionText = document.createElement("p")
 			versionText.classList.add("version-text")
 			versionText.textContent = "Vanha versio ("+VERSION+")"
+			document.querySelector("body").appendChild(versionText)
 		}
 	});
 
