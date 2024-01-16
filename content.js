@@ -293,7 +293,7 @@ function saveOtava(url) {
 
 function getOtavaAnswers() {
 	const answers = []
-	const iframe = document.querySelector("iframe")?.contentWindow.document
+	const iframes = document.querySelectorAll("iframe")
 	const column = document.querySelectorAll(".column")[0]
 	if (column) {
 		if (column.querySelector(".item")) {
@@ -303,31 +303,42 @@ function getOtavaAnswers() {
 			}
 		}
 	}
-	if (iframe && iframe.querySelector(".question-container")) {
-		for (let i of iframe.querySelectorAll(".question-container")) {
-			if (i.querySelector("textarea")) {
-				const parent = i.querySelector("textarea")
-				answers.push({type: "question-container-text", text: parent.value})
-			}
-			else if (i.querySelector(".matrix-content-columns")) {
-				const parent = i.querySelector(".matrix-content-columns")
-				const answerChoices = []
-				for (let j of parent.querySelectorAll(".section")) {
-					const tempArray = []
-					for (let k of j.querySelectorAll(".choice")) {
-						if (k.classList.contains("selected")) tempArray.push(Array.from(j.querySelectorAll(".choice")).indexOf(k))
-					}
-					answerChoices.push(tempArray)
+	for (let i of iframes) {
+		const iframe = i.contentWindow.document
+		if (iframe.querySelector(".question-container")) {
+			for (let i of iframe.querySelectorAll(".question-container")) {
+				if (i.querySelector("textarea")) {
+					const parent = i.querySelector("textarea")
+					answers.push({type: "question-container-text", text: parent.value})
 				}
-				answers.push({type: "question-matrix-choices", choices: answerChoices})
-			}
-			else if (i.querySelector(".multiplechoice")) {
-				const parent = i.querySelector(".multiplechoice")
-				answers.push({type: "question-multiple-choice", choice: Array.from(parent.querySelectorAll(".choice")).indexOf(parent.querySelector(".choice.selected"))})
-			}
-			else if (i.querySelector(".fr-element")){
-				const parent = i.querySelector(".fr-element")
-				answers.push({type: "container-text", text: parent.innerHTML})
+				else if (i.querySelector(".matrix-content-columns")) {
+					const parent = i.querySelector(".matrix-content-columns")
+					const answerChoices = []
+					for (let j of parent.querySelectorAll(".section")) {
+						const tempArray = []
+						for (let k of j.querySelectorAll(".choice")) {
+							if (k.classList.contains("selected")) tempArray.push(Array.from(j.querySelectorAll(".choice")).indexOf(k))
+						}
+						answerChoices.push(tempArray)
+					}
+					answers.push({type: "question-matrix-choices", choices: answerChoices})
+				}
+				else if (i.querySelector(".multiplechoice")) {
+					const parent = i.querySelector(".multiplechoice")
+					answers.push({type: "question-multiple-choice", choice: Array.from(parent.querySelectorAll(".choice")).indexOf(parent.querySelector(".choice.selected"))})
+				}
+				else if (i.querySelector(".fr-element")){
+					const parent = i.querySelector(".fr-element")
+					answers.push({type: "container-text", text: parent.innerHTML})
+				}
+				else if (i.querySelector(".fill-in-the-blanks")) {
+					const parent = i.querySelector(".fill-in-the-blanks")
+					const answerChoices = []
+					for (let j of parent.querySelectorAll("input")) {
+						answerChoices.push(j.value)
+					}
+					answers.push({type: "question-fill-in-the-blanks", choices: answerChoices})
+				}
 			}
 		}
 	}
@@ -337,7 +348,7 @@ function getOtavaAnswers() {
 }
 
 function sendToOtava(answers) {
-	const iframe = document.querySelector("iframe")?.contentWindow.document
+	const iframes = document.querySelectorAll("iframe")
 	const column = document.querySelectorAll(".column")[0]
 	if (column) {
 		if (column.querySelector(".item")) {
@@ -347,35 +358,45 @@ function sendToOtava(answers) {
 			}
 		}
 	}
-	if (iframe && iframe.querySelector(".question-container")) {
-		const parents = iframe.querySelectorAll(".question-container")
-		for (let i=0; i<parents.length; i++) {
-			if (parents[i].querySelector("textarea")) {
-				const parent = parents[i].querySelector("textarea")
-				parent.value = answers[i].text
-			}
-			else if (parents[i].querySelector(".matrix-content-columns")) {
-				const parent = parents[i].querySelector(".matrix-content-columns")
-				for (let j=0; j<parent.querySelectorAll(".section").length; j++) {
-					for (let k=0; k<parent.querySelectorAll(".section")[j].querySelectorAll(".choice-button").length; k++) {
-						if (answers[i].choices[j].includes(k)) {
-							const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
-							if (!buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
-						}
-						else if (!answers[i].choices[j].includes(k)) {
-							const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
-							if (buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
+	for (let n of iframes) {
+		const iframe = n.contentWindow.document
+		if (iframe.querySelector(".question-container")) {
+			const parents = iframe.querySelectorAll(".question-container")
+			for (let i=0; i<parents.length; i++) {
+				if (parents[i].querySelector("textarea")) {
+					const parent = parents[i].querySelector("textarea")
+					parent.value = answers[i].text
+				}
+				else if (parents[i].querySelector(".matrix-content-columns")) {
+					const parent = parents[i].querySelector(".matrix-content-columns")
+					for (let j=0; j<parent.querySelectorAll(".section").length; j++) {
+						for (let k=0; k<parent.querySelectorAll(".section")[j].querySelectorAll(".choice-button").length; k++) {
+							if (answers[i].choices[j].includes(k)) {
+								const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
+								if (!buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
+							}
+							else if (!answers[i].choices[j].includes(k)) {
+								const buttonElement = parent.querySelectorAll(".section")[j].querySelectorAll(".choice")[k]
+								if (buttonElement.classList.contains("selected")) buttonElement.querySelector(".choice-button").click()
+							}
 						}
 					}
 				}
-			}
-			else if (parents[i].querySelector(".multiplechoice")) {
-				const parent = parents[i].querySelector(".multiplechoice")
-				parent.querySelectorAll(".choice-button")[answers[i].choice].click()
-			}
-			else if (parents[i].querySelector(".fr-element")){
-				const parent = parents[i].querySelector(".fr-element")
-				parent.innerHTML = answers[i].text
+				else if (parents[i].querySelector(".multiplechoice")) {
+					const parent = parents[i].querySelector(".multiplechoice")
+					parent.querySelectorAll(".choice-button")[answers[i].choice].click()
+				}
+				else if (parents[i].querySelector(".fr-element")){
+					const parent = parents[i].querySelector(".fr-element")
+					parent.innerHTML = answers[i].text
+				}
+				else if (parents[i].querySelector(".fill-in-the-blanks")) {
+					const parent = parents[i].querySelector(".fill-in-the-blanks")
+					let index = 0
+					for (let j=0; j<parent.querySelectorAll("input").length; j++) {
+						parent.querySelectorAll("input")[j].value = answers[i].choices[j]
+					}
+				}
 			}
 		}
 	}
