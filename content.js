@@ -168,6 +168,9 @@ function getSanomaAnswers(type) {
 				else if (i.querySelector("textarea")) {
 					answers.push({type: "textarea", text: i.querySelector("textarea").value})
 				}
+				else if (i.querySelector(".eb-edit")) {
+					answers.push({type: "text", text: i.querySelector(".eb-edit").textContent})
+				}
 			}
 			break;
 		case 1:
@@ -175,6 +178,9 @@ function getSanomaAnswers(type) {
 			for (let i of containers) {
 				if (i.querySelector("textarea")) {
 					answers.push({type: "textarea", text: i.querySelector("textarea").value})
+				}
+				else if (i.querySelector(".eb-wrapper")) {
+					answers.push({type: "text", text: i.querySelector(".eb-wrapper").textContent})
 				}
 			}
 			break;
@@ -294,20 +300,23 @@ function saveOtava(url) {
 function getOtavaAnswers() {
 	const answers = []
 	const iframes = document.querySelectorAll("iframe")
-	const column = document.querySelectorAll(".column")[0]
+	const column = document.querySelector(".column")
 	if (column) {
 		if (column.querySelector(".item")) {
 			for (let i of column.querySelectorAll(".item")) {
 				const parent = i.querySelector(".fr-element")
+				if (!parent) continue
 				answers.push({type: "item-text", text: parent.innerHTML})
 			}
 		}
 	}
 	for (let i of iframes) {
+		try {i.contentWindow.document}
+		catch {continue}
 		const iframe = i.contentWindow.document
 		if (iframe.querySelector(".question-container")) {
 			for (let i of iframe.querySelectorAll(".question-container")) {
-				if (i.querySelector("textarea")) {
+				if (i.querySelector("textarea") && !i.querySelector(".fill-in-the-blanks")) {
 					const parent = i.querySelector("textarea")
 					answers.push({type: "question-container-text", text: parent.value})
 				}
@@ -334,10 +343,11 @@ function getOtavaAnswers() {
 				else if (i.querySelector(".fill-in-the-blanks")) {
 					const parent = i.querySelector(".fill-in-the-blanks")
 					const answerChoices = []
-					for (let j of parent.querySelectorAll("input")) {
+					const elementType = parent.querySelector("input") ? "input" : parent.querySelector("select") ? "select" : "textarea"
+					for (let j of parent.querySelectorAll(elementType)) {
 						answerChoices.push(j.value)
 					}
-					answers.push({type: "question-fill-in-the-blanks", choices: answerChoices})
+					answers.push({type: "question-fill-in-the-blanks-"+elementType, choices: answerChoices})
 				}
 			}
 		}
@@ -349,21 +359,24 @@ function getOtavaAnswers() {
 
 function sendToOtava(answers) {
 	const iframes = document.querySelectorAll("iframe")
-	const column = document.querySelectorAll(".column")[0]
+	const column = document.querySelector(".column")
 	if (column) {
 		if (column.querySelector(".item")) {
 			for (let i=0; i<column.querySelectorAll(".item").length; i++) {
 				const parent = column.querySelectorAll(".item")[i].querySelector(".fr-element")
+				if (!parent) continue
 				parent.innerHTML = answers[i].text
 			}
 		}
 	}
 	for (let n of iframes) {
+		try {n.contentWindow.document}
+		catch {continue}
 		const iframe = n.contentWindow.document
 		if (iframe.querySelector(".question-container")) {
 			const parents = iframe.querySelectorAll(".question-container")
 			for (let i=0; i<parents.length; i++) {
-				if (parents[i].querySelector("textarea")) {
+				if (parents[i].querySelector("textarea") && !parents[i].querySelector(".fill-in-the-blanks")) {
 					const parent = parents[i].querySelector("textarea")
 					parent.value = answers[i].text
 				}
@@ -393,8 +406,9 @@ function sendToOtava(answers) {
 				else if (parents[i].querySelector(".fill-in-the-blanks")) {
 					const parent = parents[i].querySelector(".fill-in-the-blanks")
 					let index = 0
-					for (let j=0; j<parent.querySelectorAll("input").length; j++) {
-						parent.querySelectorAll("input")[j].value = answers[i].choices[j]
+					const elementType = parent.querySelector("input") ? "input" : parent.querySelector("select") ? "select" : "textarea"
+					for (let j=0; j<parent.querySelectorAll(elementType).length; j++) {
+						parent.querySelectorAll(elementType)[j].value = answers[i].choices[j]
 					}
 				}
 			}
