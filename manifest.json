@@ -21,10 +21,13 @@
 	"permissions": [
 		"tabs",
 		"storage",
-		"scripting"
+		"scripting",
+		"webRequest"
 	],
 	"host_permissions": [
 		"*://kampus.sanomapro.fi/content-feed/*",
-		"*://materiaalit.otava.fi/web/*"
+		"*://materiaalit.otava.fi/web/*",
+		"https://corsproxy.io/*",
+		"https://eu-central-1.aws.data.mongodb-api.com/*"
 	]
 }
