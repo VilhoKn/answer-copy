@@ -141,8 +141,8 @@ function saveSanomapro(url) {
 	
 
 	chrome.runtime.sendMessage({type: "insert", options, optionsFind, findUrl, newUrl}, res => {
-		if(res.ok) console.log("res ok")
-		else console.log(res.error)
+		if(res?.ok) console.log("res ok")
+		else console.log(res?.error)
 	})
 }
 
