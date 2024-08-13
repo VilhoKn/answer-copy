@@ -18,6 +18,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
   switch (obj.type) {
     case "insert":
       const nimi = chrome.storage.local.get("nimi")
+      console.log(nimi)
 
       if (!nimi) return
       obj.options.body.document.name = nimi
