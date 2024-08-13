@@ -17,17 +17,16 @@ chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
 
   switch (obj.type) {
     case "insert":
-      [ options, optionsFind, findUrl, newUrl ] = obj
       const nimi = chrome.storage.local.get("nimi")
 
       if (!nimi) return
-      options.body.document.name = res.nimi
-      optionsFind.body.filter.name = res.nimi
-      options.body = JSON.stringify(options.body)
-      optionsFind.body = JSON.stringify(optionsFind.body)
-      fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
+      obj.options.body.document.name = nimi
+      obj.optionsFind.body.filter.name = nimi
+      obj.options.body = JSON.stringify(obj.options.body)
+      obj.optionsFind.body = JSON.stringify(obj.optionsFind.body)
+      fetch(obj.findUrl, obj.optionsFind).then(res => res.json()).then(response => {
         if (response.documents.length < 3) {
-          fetch(newUrl, options)
+          fetch(obj.newUrl, obj.options)
         }
       })
       sendRes({ok:true})
