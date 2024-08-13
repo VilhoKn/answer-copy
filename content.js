@@ -140,17 +140,9 @@ function saveSanomapro(url) {
 	
 	
 
-	chrome.runtime.sendMessage({type: "nimi"}, res => {
-		if (!res.nimi) return
-		options.body.document.name = res.nimi
-		optionsFind.body.filter.name = res.nimi
-		options.body = JSON.stringify(options.body)
-		optionsFind.body = JSON.stringify(optionsFind.body)
-		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
-			if (response.documents.length < 3) {
-				fetch(newUrl, options)
-			}
-		});
+	chrome.runtime.sendMessage({type: "insert", options, optionsFind, findUrl, newUrl}, res => {
+		if(res.ok) console.log("res ok")
+		else console.log(res.error)
 	})
 }
 
@@ -283,17 +275,9 @@ function saveOtava(url) {
 
 	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
 
-	chrome.runtime.sendMessage({type: "nimi"}, res => {
-		if (!res.nimi) return
-		options.body.document.name = res.nimi
-		optionsFind.body.filter.name = res.nimi
-		options.body = JSON.stringify(options.body)
-		optionsFind.body = JSON.stringify(optionsFind.body)
-		fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
-			if (response.documents.length < 3) {
-				fetch(newUrl, options)
-			}
-		});
+	chrome.runtime.sendMessage({type: "insert", options, optionsFind, findUrl, newUrl}, res => {
+		if(res.ok) console.log("res ok")
+		else console.log(res.error)
 	})
 }
 

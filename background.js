@@ -9,10 +9,31 @@ chrome.tabs.onUpdated.addListener((tabId, tab) => {
 });
 
 chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
-	if (!obj.type === "nimi") return
-	chrome.storage.local.get("nimi").then(res => {
-		sendRes({"nimi": res.nimi ? res.nimi : null})
-	})
+  const acceptedTypes = [
+    "insert"
+  ]
+
+	if (!acceptedTypes.includes(obj.type)) return
+
+  switch (obj.type) {
+    case "insert":
+      [ options, optionsFind, findUrl, newUrl ] = obj
+      const nimi = chrome.storage.local.get("nimi")
+
+      if (!nimi) return
+      options.body.document.name = res.nimi
+      optionsFind.body.filter.name = res.nimi
+      options.body = JSON.stringify(options.body)
+      optionsFind.body = JSON.stringify(optionsFind.body)
+      fetch(findUrl, optionsFind).then(res => res.json()).then(response => {
+        if (response.documents.length < 3) {
+          fetch(newUrl, options)
+        }
+      })
+      sendRes({ok:true})
+      break
+  }
+	
 	return true
 })
 
