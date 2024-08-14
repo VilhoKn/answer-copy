@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
         fetch(obj.findUrl, obj.optionsFind).then(res => res.json()).then(response => {
           console.log(response)
           //if (response.documents.length < 3) {
-            fetch(obj.newUrl, obj.options).then(res=>res.json()).then(res=>console.log(res))
+            fetch(obj.newUrl, obj.options).then(res=>{console.log(res);return res.json()}).then(res=>console.log(res))
           //}
         })
         sendRes({ok:true})
