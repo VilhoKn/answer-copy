@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		options.body.filter.questionPath = questionPath
 		options.body = JSON.stringify(options.body)
 		fetch(newUrl, options).then(res => res.json()).then(response =>{
+			console.log(response.documents)
 			if(response.documents.length > 0) {
 				document.querySelector(".name-container").style.top = "85%"
 				document.querySelector(".header-assignment").textContent = response.documents[0].assignmentName.length <= 25 ? response.documents[0].assignmentName : response.documents[0].assignmentName.slice(0, 23) + "..."
