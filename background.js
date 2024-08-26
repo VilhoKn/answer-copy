@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendRes) => {
         obj.optionsFind.body.filter.name = res.nimi
         obj.options.body = JSON.stringify(obj.options.body)
         obj.optionsFind.body = JSON.stringify(obj.optionsFind.body)
-        console.log(obj.findUrl, obj.newUrl)
+        console.log(obj.options)
         fetch(obj.findUrl, obj.optionsFind).then(res => res.json()).then(response => {
           console.log(response)
           //if (response.documents.length < 3) {
