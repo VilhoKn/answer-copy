@@ -83,8 +83,12 @@ function saveSanomapro(url) {
 	const questionType = questionTypeMap[document.querySelector("app-document").getAttribute("content-type")]
 	const questionPath = url.split("content-feed/")[1]
 	const rawAnswers = getSanomaAnswers(questionType)
-	const answers = JSON.stringify(rawAnswers).replace(/<[^>]*>/g, '')
 	const assignmentName = document.querySelector("app-module-content-title").textContent
+
+	const answers = []
+	for (i=0; i<rawAnswers.length; i++) {
+		answers.push({type: rawAnswers[i].type, text: rawAnswers[i].text.replace(/<[^>]*>/g, '')})
+	}
 
 	if (rawAnswers.length === 0) {
 		alert("Ei tuettu kysymystyyppi")
@@ -222,8 +226,12 @@ function saveOtava(url) {
 
 	const questionPath = url.split("web/")[1]
 	const rawAnswers = getOtavaAnswers()
-	const answers = JSON.stringify(rawAnswers).replace(/<[^>]*>/g, '')
 	const assignmentName = document.querySelector(".o-topbar-breadcrumb").lastElementChild.textContent
+
+	const answers = []
+	for (i=0; i<rawAnswers.length; i++) {
+		answers.push({type: rawAnswers[i].type, text: rawAnswers[i].text.replace(/<[^>]*>/g, '')})
+	}
 
 	if (rawAnswers.length === 0) {
 		alert("Ei tuettu kysymystyyppi")
