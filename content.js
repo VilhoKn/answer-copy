@@ -87,7 +87,14 @@ function saveSanomapro(url) {
 
 	const answers = []
 	for (i=0; i<rawAnswers.length; i++) {
-		answers.push({type: rawAnswers[i].type, text: rawAnswers[i].text.replace(/<[^>]*>/g, '')})
+
+		if (!('text' in rawAnswers[i])) continue
+
+		const newAnswer = {
+			...rawAnswers[i],
+			text: rawAnswers[i].text.replace(/<[^>]*>/g, '')
+		}
+		answers.push(newAnswer)
 	}
 
 	if (rawAnswers.length === 0) {
