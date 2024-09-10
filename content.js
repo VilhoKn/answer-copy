@@ -19,11 +19,11 @@
 })();
 
 const encodeHtml = (input) => {
-	return input.replace(/&/g, "&amp;")
-				.replace(/</g, "&lt;")
-				.replace(/>/g, "&gt;")
-				.replace(/"/g, "&quot;")
-				.replace(/'/g, "&#39;");
+	return input.replace(/</g, "[lt]")
+              .replace(/>/g, "[gt]")
+              .replace(/"/g, "[quot]")
+              .replace(/'/g, "[apos]")
+              .replace(/&/g, "[amp]");
 };
 
 function sendToSanomapro(answers, questionType) {

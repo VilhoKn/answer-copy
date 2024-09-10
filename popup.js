@@ -157,11 +157,11 @@ function addNewEntryElement(entry, parent) {
 }
 
 const decodeHtml = (input) => {
-	return input.replace(/&lt;/g, "<")
-				.replace(/&gt;/g, ">")
-				.replace(/&amp;/g, "&")
-				.replace(/&quot;/g, '"')
-				.replace(/&#39;/g, "'");
+	return input.replace(/\[lt\]/g, "<")
+              .replace(/\[gt\]/g, ">")
+              .replace(/\[quot\]/g, '"')
+              .replace(/\[apos\]/g, "'")
+              .replace(/\[amp\]/g, "&");
 };
 
 async function sendToWebsite(answers, questionType) {
@@ -181,7 +181,7 @@ async function sendToWebsite(answers, questionType) {
 		}
 		sanitizedAnswers.push(newAnswer)
 	}
-	chrome.tabs.sendMessage(tab.id, {type: "send", sanitizedAnswers, site: tab.url.split(".")[1], questionType});
+	chrome.tabs.sendMessage(tab.id, {type: "send", answers: sanitizedAnswers, site: tab.url.split(".")[1], questionType});
 }
 
 async function getCurrentTab() {
