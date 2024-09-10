@@ -95,12 +95,16 @@ function saveSanomapro(url) {
 
 	const answers = []
 	for (i=0; i<rawAnswers.length; i++) {
+		const answer = rawAnswers[i]
 
-		if (!('text' in rawAnswers[i])) continue
+		if (!('text' in answer)) {
+			answers.push(answer)
+			continue
+		}
 
 		const newAnswer = {
-			...rawAnswers[i],
-			text: encodeHtml(rawAnswers[i].text)
+			...answer,
+			text: encodeHtml(answer.text)
 		}
 		answers.push(newAnswer)
 	}
@@ -245,12 +249,16 @@ function saveOtava(url) {
 
 	const answers = []
 	for (i=0; i<rawAnswers.length; i++) {
+		const answer = rawAnswers[i]
 
-		if (!('text' in rawAnswers[i])) continue
+		if (!('text' in answer)) {
+			answers.push(answer)
+			continue
+		}
 
 		const newAnswer = {
-			...rawAnswers[i],
-			text: encodeHtml(rawAnswers[i].text)
+			...answer,
+			text: encodeHtml(answer.text)
 		}
 		answers.push(newAnswer)
 	}

@@ -168,11 +168,16 @@ async function sendToWebsite(answers, questionType) {
 	let tab = await getCurrentTab();
 	const sanitizedAnswers = [];
 	for (let i = 0; i < answers.length; i++) {
-		if (!('text' in answers[i])) continue
+		const answer = answers[i]
+
+		if (!('text' in answer)) {
+			sanitizedAnswers.push(answer)
+			continue
+		}
 
 		const newAnswer = {
-			...answers[i],
-			text: encodeHtml(answers[i].text)
+			...answer,
+			text: decodeHtml(answer.text)
 		}
 		sanitizedAnswers.push(newAnswer)
 	}
