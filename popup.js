@@ -156,9 +156,27 @@ function addNewEntryElement(entry, parent) {
 	parent.appendChild(entryContainer)
 }
 
+const decodeHtml = (input) => {
+	return input.replace(/&lt;/g, "<")
+				.replace(/&gt;/g, ">")
+				.replace(/&amp;/g, "&")
+				.replace(/&quot;/g, '"')
+				.replace(/&#39;/g, "'");
+};
+
 async function sendToWebsite(answers, questionType) {
 	let tab = await getCurrentTab();
-	chrome.tabs.sendMessage(tab.id, {type: "send", answers, site: tab.url.split(".")[1], questionType});
+	const sanitizedAnswers = [];
+	for (let i = 0; i < answers.length; i++) {
+		if (!('text' in answers[i])) continue
+
+		const newAnswer = {
+			...answers[i],
+			text: encodeHtml(answers[i].text)
+		}
+		sanitizedAnswers.push(newAnswer)
+	}
+	chrome.tabs.sendMessage(tab.id, {type: "send", sanitizedAnswers, site: tab.url.split(".")[1], questionType});
 }
 
 async function getCurrentTab() {

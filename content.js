@@ -18,6 +18,14 @@
 	})
 })();
 
+const encodeHtml = (input) => {
+	return input.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#39;");
+};
+
 function sendToSanomapro(answers, questionType) {
 	let containers;
 	switch(questionType) {
@@ -92,7 +100,7 @@ function saveSanomapro(url) {
 
 		const newAnswer = {
 			...rawAnswers[i],
-			text: rawAnswers[i].text.replace(/<[^>]*>/g, '')
+			text: encodeHtml(rawAnswers[i].text)
 		}
 		answers.push(newAnswer)
 	}
@@ -242,7 +250,7 @@ function saveOtava(url) {
 
 		const newAnswer = {
 			...rawAnswers[i],
-			text: rawAnswers[i].text.replace(/<[^>]*>/g, '')
+			text: encodeHtml(rawAnswers[i].text)
 		}
 		answers.push(newAnswer)
 	}
