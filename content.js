@@ -114,7 +114,7 @@ function saveSanomapro(url) {
 		return
 	}
 
-	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
+	const findUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find'
 	
 	const optionsFind = {
 		method: 'POST',
@@ -160,7 +160,7 @@ function saveSanomapro(url) {
 		}
 	}
 
-	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
+	const newUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne'
 	
 	
 
@@ -268,7 +268,7 @@ function saveOtava(url) {
 		return
 	}
 
-	const findUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
+	const findUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find'
 	
 	const optionsFind = {
 		method: 'POST',
@@ -313,7 +313,7 @@ function saveOtava(url) {
 		}
 	}
 
-	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne');
+	const newUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/insertOne'
 
 	chrome.runtime.sendMessage({type: "insert", options, optionsFind, findUrl, newUrl}, res => {
 		if(res?.ok) console.log("res ok")

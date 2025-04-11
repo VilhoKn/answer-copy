@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "1.5",
+    "version": "1.6",
     "name": "Answer Copy",
     "action": {
         "default_popup": "index.html",
@@ -27,7 +27,7 @@
 	"host_permissions": [
 		"*://kampus.sanomapro.fi/content-feed/*",
 		"*://materiaalit.otava.fi/web/*",
-		"https://corsproxy.io/*",
+		"*://api.allorigins.win/*",
 		"https://eu-central-1.aws.data.mongodb-api.com/*"
 	]
 }

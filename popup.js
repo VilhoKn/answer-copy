@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		})
 	}
 
-	const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find');
-	const versionUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/findOne');
+	const newUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/find'
+	const versionUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/findOne'
 
 	fetch(versionUrl, optionsVersion).then(res => res.json()).then(response =>{
 		if (!response?.document?.version) return
@@ -142,7 +142,7 @@ function addNewEntryElement(entry, parent) {
 						}
 					})
 				}
-				const newUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/deleteOne');
+				const newUrl = 'https://eu-central-1.aws.data.mongodb-api.com/app/data-mgjos/endpoint/data/v1/action/deleteOne'
 				fetch(newUrl, options).then(res => res.json()).then(response =>{
 					if(response.deletedCount === 1) {
 						entryContainer.remove()
